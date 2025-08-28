@@ -2,6 +2,10 @@
 	admin 0.0.0.0:2019
 }
 
-:2015
+localhost {
+	reverse_proxy api:3000
+}
 
-respond "Hello, world!"
+localhost:2015 {
+  respond "Hello, world!"
+}
