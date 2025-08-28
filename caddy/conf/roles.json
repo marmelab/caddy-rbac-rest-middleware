@@ -1,0 +1,43 @@
+{
+  "accountant": [
+    { "action": ["list", "show"], "resource": "posts" },
+    { "action": ["list"], "resource": "comments" },
+    { "action": "*", "resource": "tags" },
+    { "action": ["list", "show"], "resource": "products" },
+    { "action": "read", "resource": "products.*" },
+    { "type": "deny", "action": "read", "resource": "products.description" },
+    { "action": "list", "resource": "categories" },
+    { "action": "read", "resource": "categories.*" },
+    { "action": ["list", "show"], "resource": "customers" },
+    { "action": "read", "resource": "customers.*" },
+    { "action": "*", "resource": "invoices" }
+  ],
+  "contentEditor": [
+    {
+      "action": ["list", "create", "edit", "delete", "export"],
+      "resource": "products"
+    },
+    { "action": "read", "resource": "products.*" },
+    { "type": "deny", "action": "read", "resource": "products.stock" },
+    { "type": "deny", "action": "read", "resource": "products.sales" },
+    { "action": "write", "resource": "products.*" },
+    { "type": "deny", "action": "write", "resource": "products.stock" },
+    { "type": "deny", "action": "write", "resource": "products.sales" },
+    { "action": "list", "resource": "categories" },
+    { "action": ["list", "edit"], "resource": "customers" },
+    { "action": ["list", "edit"], "resource": "reviews" }
+  ],
+  "stockManager": [
+    { "action": ["list", "edit", "export"], "resource": "products" },
+    { "action": "read", "resource": "products.*" },
+    {
+      "type": "deny",
+      "action": "read",
+      "resource": "products.description"
+    },
+    { "action": "write", "resource": "products.stock" },
+    { "action": "write", "resource": "products.sales" },
+    { "action": "list", "resource": "categories" }
+  ],
+  "administrator": [{ "action": "*", "resource": "*" }]
+}

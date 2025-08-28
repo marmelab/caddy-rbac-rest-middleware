@@ -4,7 +4,9 @@
 
 http://localhost {
   route {
-    simple_rest_rbac stderr
+    simple_rest_rbac {
+      roles /etc/caddy/roles.json
+    }
     reverse_proxy api:3000
   }
 }
