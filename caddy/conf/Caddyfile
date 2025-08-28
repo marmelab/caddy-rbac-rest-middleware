@@ -1,9 +1,12 @@
 {
-	admin 0.0.0.0:2019
+    admin 0.0.0.0:2019
 }
 
 http://localhost {
-	reverse_proxy api:3000
+  route {
+    simple_rest_rbac stderr
+    reverse_proxy api:3000
+  }
 }
 
 http://localhost:2015 {

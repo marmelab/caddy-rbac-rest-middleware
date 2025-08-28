@@ -1,6 +1,6 @@
 services:
   caddy:
-    image: caddy:latest
+    build: .
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
