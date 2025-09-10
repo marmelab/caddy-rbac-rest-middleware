@@ -39,22 +39,25 @@
         list-style: none;
         padding: 0;
         margin-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
       }
 
-      .app-list li {
-        margin-bottom: 15px;
+      .span-full {
+        grid-column: span 2;
       }
 
       .app-button {
         display: block;
-        max-width: 300px;
         margin: 0 auto;
-        padding: 12px;
+        padding: 8px 12px;
         background-color: #4caf50;
         color: white;
         text-decoration: none;
         border-radius: 6px;
-        font-size: 16px;
+        font-size: 14px;
         transition: background-color 0.2s ease;
       }
 
@@ -63,7 +66,7 @@
       }
 
       .welcome {
-        margin-bottom: 10px;
+        margin-bottom: 16px;
         font-size: 14px;
         color: #666;
       }
@@ -84,32 +87,31 @@
       .logout-button:hover {
         background-color: #d32f2f;
       }
-
-      .session-expiry {
-        margin-top: 20px;
-        font-size: 14px;
-        color: #666;
-      }
     </style>
   </head>
   <body>
     <div class="portal-container">
       <div class="welcome">
-        Welcome, User {{ placeholder "http.auth.user.id" | html }}
+        Welcome user {{ placeholder "http.auth.user.id" | html }} ({{ placeholder "http.auth.user.role" | html }})
       </div>
-      <h2>Available Applications</h2>
+      <h2>Available Resources</h2>
       <ul class="app-list">
-        <li>
+        <li class="span-full">
           <a href="/" class="app-button">JSON Server API</a>
         </li>
+        <li>
+          <a href="/posts" class="app-button">Post List</a>
+        </li>
+        <li>
+          <a href="/posts/1" class="app-button">Post Show</a>
+        </li>
+        <li>
+          <a href="/comments" class="app-button">Comment List</a>
+        </li>
+        <li>
+          <a href="/comments/1" class="app-button">Comment Show</a>
+        </li>
       </ul>
-      <div class="session-expiry">
-        {{- $exp := toDate "2006-01-02T15:04:05Z07:00" (placeholder
-        "http.auth.user.exp") -}} {{- $ago := printf "%s" ($exp | ago) -}} {{-
-        $expTime := $exp | date "2006-01-02 15:04:05 MST" -}} ⌛
-        <strong>Session expires in {{ trimPrefix "-" $ago }}</strong><br />
-        on {{ $expTime }}
-      </div>
       <a href="/logout.html" class="logout-button">Logout</a>
     </div>
   </body>

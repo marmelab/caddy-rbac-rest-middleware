@@ -88,7 +88,8 @@ http://localhost {
     route {
       import snippet_check_jwt
       simple_rest_rbac {
-        roles /etc/caddy/roles.json
+        roles_file /etc/caddy/roles.json
+        role {http.auth.user.role}
       }
       reverse_proxy api:3000
     }

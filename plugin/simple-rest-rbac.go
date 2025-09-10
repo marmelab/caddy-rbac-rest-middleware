@@ -13,11 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const (
-	// TODO - get that from JWT instead
-	role = "accountant"
-)
-
 func init() {
 	caddy.RegisterModule(Middleware{})
 	httpcaddyfile.RegisterHandlerDirective("simple_rest_rbac", parseCaddyfile)
@@ -68,9 +63,9 @@ func getActionFromRequest(r *http.Request) string {
 // Middleware implements an HTTP handler that writes the
 // visitor's IP address to a file or stream.
 type Middleware struct {
-	RolesFilePath string          `json:"roles,omitempty"`
+	Role          string          `json:"role,omitempty"`
+	RolesFilePath string          `json:"roles_file,omitempty"`
 	roles         RoleDefinitions
-
 	logger        *zap.Logger
 }
 
@@ -102,13 +97,22 @@ func (m *Middleware) Provision(ctx caddy.Context) error {
 // Validate implements caddy.Validator.
 func (m *Middleware) Validate() error {
 	if m.roles == nil {
-		return fmt.Errorf("no roles defined")
+		return fmt.Errorf("no role permissions defined")
+	}
+	if m.Role == "" {
+		return fmt.Errorf("no role defined")
 	}
 	return nil
 }
 
 // ServeHTTP implements caddyhttp.MiddlewareHandler.
 func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
+  // Retrieve the replacer from the request context
+	repl, ok := r.Context().Value(caddy.ReplacerCtxKey).(*caddy.Replacer)
+	if !ok {
+		return caddyhttp.Error(http.StatusInternalServerError, nil)
+	}
+
 	// Extract resource from URL path
 	resource := extractResource(r.URL.Path)
 	if resource == "" {
@@ -122,18 +126,27 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 		// Unknown method, deny access
 		return caddyhttp.Error(http.StatusMethodNotAllowed, fmt.Errorf("method not allowed"))
 	}
+
+	// Resolve placeholders in the role
+	resolvedRole := repl.ReplaceAll(m.Role, "")
+	resolvedRole = strings.TrimSpace(resolvedRole)
+
+	if resolvedRole == "" {
+		// No role defined, deny access
+		return caddyhttp.Error(http.StatusMethodNotAllowed, fmt.Errorf("role not defined"))
+	}
 	
 	// Get permissions for the current role
-	permissions, exists := m.roles[role]
+	permissions, exists := m.roles[resolvedRole]
 	if !exists {
-		m.logger.Warn("Role not found", zap.String("role", role))
-		return caddyhttp.Error(http.StatusForbidden, fmt.Errorf("role not found: %s", role))
+		m.logger.Warn("Role not found", zap.String("role", resolvedRole))
+		return caddyhttp.Error(http.StatusForbidden, fmt.Errorf("role not found: %s", resolvedRole))
 	}
 	
 	// Check if access is allowed
 	if !canAccessWithPermissions(permissions, action, resource) {
 		m.logger.Info("Access denied", 
-			zap.String("role", role),
+			zap.String("role", resolvedRole),
 			zap.String("action", action),
 			zap.String("resource", resource),
 		)
@@ -142,7 +155,7 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 	
 	// Access allowed, continue to next handler
 	m.logger.Info("Access granted", 
-		zap.String("role", role),
+		zap.String("role", resolvedRole),
 		zap.String("action", action),
 		zap.String("resource", resource),
 	)
@@ -160,8 +173,10 @@ func (m *Middleware) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			return d.ArgErr()
 		}
 		switch param {
-			case "roles":
+			case "roles_file":
 				m.RolesFilePath = arg
+			case "role":
+				m.Role = arg
 			default:
 				return d.Errf("unknown subdirective: %s", param)
 		}
