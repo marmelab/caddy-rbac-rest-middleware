@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Portal</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+      }
+
+      .portal-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .app-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      .app-list li {
+        margin-bottom: 15px;
+      }
+
+      .app-button {
+        display: block;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 12px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: background-color 0.2s ease;
+      }
+
+      .app-button:hover {
+        background-color: #45a049;
+      }
+
+      .welcome {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .logout-button {
+        display: block;
+        max-width: 300px;
+        margin: 20px auto 0;
+        padding: 12px;
+        background-color: #f44336;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: background-color 0.2s ease;
+      }
+
+      .logout-button:hover {
+        background-color: #d32f2f;
+      }
+
+      .session-expiry {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="portal-container">
+      <div class="welcome">
+        Welcome, User {{ placeholder "http.auth.user.id" | html }}
+      </div>
+      <h2>Available Applications</h2>
+      <ul class="app-list">
+        <li>
+          <a href="/" class="app-button">JSON Server API</a>
+        </li>
+      </ul>
+      <div class="session-expiry">
+        {{- $exp := toDate "2006-01-02T15:04:05Z07:00" (placeholder
+        "http.auth.user.exp") -}} {{- $ago := printf "%s" ($exp | ago) -}} {{-
+        $expTime := $exp | date "2006-01-02 15:04:05 MST" -}} ⌛
+        <strong>Session expires in {{ trimPrefix "-" $ago }}</strong><br />
+        on {{ $expTime }}
+      </div>
+      <a href="/logout.html" class="logout-button">Logout</a>
+    </div>
+  </body>
+</html>

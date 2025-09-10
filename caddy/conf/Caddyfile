@@ -1,16 +1,99 @@
 {
-    admin 0.0.0.0:2019
+  admin 0.0.0.0:2019
+  order jwtauth before basic_auth
 }
 
-http://localhost {
-  route {
-    simple_rest_rbac {
-      roles /etc/caddy/roles.json
-    }
-    reverse_proxy api:3000
+## Snippets
+# This snippet is used to check the JWT
+(snippet_check_jwt) {
+	jwtauth {
+    sign_key WkLvBJDbOX/BcWbcD6pU9edHOZNviPLOs2AQduFRivY=
+    sign_alg HS256
+    issuer_whitelist https://auth.example.com
+    audience_whitelist "api-endpoint-1"
+    user_claims sub
+    meta_claims role
+    from_cookies jwt_auth
   }
 }
 
-http://localhost:2015 {
-  respond "Hello, world!"
+# This snippet is used to handle 401 errors
+(snippet_handle_errors_401) {
+	handle_errors 401 {
+		route {
+			redir * "http://localhost/login.html"
+		}
+	}
 }
+
+http://localhost {
+  handle * {
+		route {
+			# Convenience redirects
+			redir /portal /portal.html
+			redir /login /login.html
+			redir /logout /logout.html
+		}
+	}
+
+  handle /login {
+    @get_login {
+      method GET
+    }
+    redir @get_login /login.html
+
+    jwt_issuer {
+      sign_key WkLvBJDbOX/BcWbcD6pU9edHOZNviPLOs2AQduFRivY=
+      user_db_path /etc/caddy/users.json
+      token_issuer https://auth.example.com
+      default_token_lifetime 1h
+      enable_cookie
+      cookie_name jwt_auth
+			cookie_domain .localhost
+    }
+  }
+
+  # Unprotected:
+	handle /login.html {
+		templates
+		file_server {
+			root /srv/html
+		}
+	}
+
+  # Protected Portal + Logout
+	@protected_html {
+		path /portal.html
+		path /logout.html
+	}
+  handle @protected_html {
+		import snippet_check_jwt
+
+		route {
+			# delete the cookie
+			header /logout.html {
+				# Make sure this matches the issued cookie from Login Endpoint - especially regarding Domain.
+				# Otherwise, the cookie will not be deleted.
+				+Set-Cookie "jwt_auth=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure=true; SameSite=Strict; Domain=.localhost"
+			}
+
+			templates
+			file_server /*.html {
+				root /srv/html
+			}
+		}
+	}
+
+  handle * {
+    route {
+      import snippet_check_jwt
+      simple_rest_rbac {
+        roles /etc/caddy/roles.json
+      }
+      reverse_proxy api:3000
+    }
+  }
+
+  import snippet_handle_errors_401
+}
+

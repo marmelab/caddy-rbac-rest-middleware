@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logout</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+      }
+
+      .logout-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .message {
+        margin: 20px 0;
+        font-size: 16px;
+        color: #666;
+      }
+
+      .login-button {
+        display: block;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 12px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: background-color 0.2s ease;
+      }
+
+      .login-button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logout-container">
+      <h2>Logout Successful</h2>
+      <p class="message">Your authentication cookie has been deleted.</p>
+      <a href="/login.html" class="login-button">Login</a>
+    </div>
+  </body>
+</html>
