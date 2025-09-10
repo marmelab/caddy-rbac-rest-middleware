@@ -1,4 +1,4 @@
-module github.com/marmelab/caddy-simple-rest-rbac/plugin
+module github.com/marmelab/caddy-rbac-rest-middleware/plugin
 
 go 1.25.0
 
