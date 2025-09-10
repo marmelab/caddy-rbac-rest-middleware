@@ -1,19 +1,41 @@
 {
-  "bob": {
+  "guest": {
     "password": "$2a$14$SL41zi5LqFYnjIs/U0lX4ewZsrr8aipeCDivi02ccgwdhb/9LahxG",
     "audience": ["api-endpoint-1"],
     "meta_claims": {
-      "name": "Bob Example",
-      "role": "accountant"
+      "role": "guest"
     },
     "comment": "Password is Tschigerillo"
   },
-  "alice": {
+  "user": {
     "password": "$2a$14$SL41zi5LqFYnjIs/U0lX4ewZsrr8aipeCDivi02ccgwdhb/9LahxG",
     "audience": ["api-endpoint-1"],
     "meta_claims": {
-      "name": "Alice Example",
-      "role": "administrator"
+      "role": "user"
+    },
+    "comment": "Password is Tschigerillo"
+  },
+  "writer": {
+    "password": "$2a$14$SL41zi5LqFYnjIs/U0lX4ewZsrr8aipeCDivi02ccgwdhb/9LahxG",
+    "audience": ["api-endpoint-1"],
+    "meta_claims": {
+      "role": "writer"
+    },
+    "comment": "Password is Tschigerillo"
+  },
+  "moderator": {
+    "password": "$2a$14$SL41zi5LqFYnjIs/U0lX4ewZsrr8aipeCDivi02ccgwdhb/9LahxG",
+    "audience": ["api-endpoint-1"],
+    "meta_claims": {
+      "role": "moderator"
+    },
+    "comment": "Password is Tschigerillo"
+  },
+  "admin": {
+    "password": "$2a$14$SL41zi5LqFYnjIs/U0lX4ewZsrr8aipeCDivi02ccgwdhb/9LahxG",
+    "audience": ["api-endpoint-1"],
+    "meta_claims": {
+      "role": "admin"
     },
     "comment": "Password is Tschigerillo"
   }

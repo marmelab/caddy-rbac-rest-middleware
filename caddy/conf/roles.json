@@ -1,43 +1,40 @@
 {
-  "accountant": [
+  "guest": [
+    { "action": ["list"], "resource": "posts" },
+    { "action": "read", "resource": "posts.*" },
+    { "type": "deny", "action": "read", "resource": "posts.views" },
+    { "type": "deny", "action": "read", "resource": "posts.average_note" }
+  ],
+  "user": [
     { "action": ["list", "show"], "resource": "posts" },
-    { "action": ["list"], "resource": "comments" },
-    { "action": "*", "resource": "tags" },
-    { "action": ["list", "show"], "resource": "products" },
-    { "action": "read", "resource": "products.*" },
-    { "type": "deny", "action": "read", "resource": "products.description" },
-    { "action": "list", "resource": "categories" },
-    { "action": "read", "resource": "categories.*" },
-    { "action": ["list", "show"], "resource": "customers" },
-    { "action": "read", "resource": "customers.*" },
-    { "action": "*", "resource": "invoices" }
+    { "action": "read", "resource": "posts.*" },
+    { "type": "deny", "action": "read", "resource": "posts.views" },
+    { "type": "deny", "action": "read", "resource": "posts.average_note" },
+    { "action": ["list", "show", "create"], "resource": "comments" },
+    { "action": "read", "resource": "comments.*" },
+    { "action": "write", "resource": "comments.*" }
   ],
-  "contentEditor": [
+  "writer": [
+    { "action": ["list", "show", "create", "edit"], "resource": "posts" },
+    { "action": "read", "resource": "posts.*" },
+    { "action": "write", "resource": "posts.*" },
+    { "type": "deny", "action": "read", "resource": "posts.views" },
+    { "type": "deny", "action": "read", "resource": "posts.average_note" },
+    { "type": "deny", "action": "write", "resource": "posts.views" },
+    { "type": "deny", "action": "write", "resource": "posts.average_note" },
+    { "action": ["list", "show"], "resource": "comments" },
+    { "action": "read", "resource": "comments.*" }
+  ],
+  "moderator": [
+    { "action": ["list", "show", "create", "edit"], "resource": "posts" },
+    { "action": "read", "resource": "posts.*" },
+    { "action": "write", "resource": "posts.*" },
     {
-      "action": ["list", "create", "edit", "delete", "export"],
-      "resource": "products"
+      "action": ["list", "show", "create", "edit", "delete"],
+      "resource": "comments"
     },
-    { "action": "read", "resource": "products.*" },
-    { "type": "deny", "action": "read", "resource": "products.stock" },
-    { "type": "deny", "action": "read", "resource": "products.sales" },
-    { "action": "write", "resource": "products.*" },
-    { "type": "deny", "action": "write", "resource": "products.stock" },
-    { "type": "deny", "action": "write", "resource": "products.sales" },
-    { "action": "list", "resource": "categories" },
-    { "action": ["list", "edit"], "resource": "customers" },
-    { "action": ["list", "edit"], "resource": "reviews" }
+    { "action": "read", "resource": "comments.*" },
+    { "action": "write", "resource": "comments.*" }
   ],
-  "stockManager": [
-    { "action": ["list", "edit", "export"], "resource": "products" },
-    { "action": "read", "resource": "products.*" },
-    {
-      "type": "deny",
-      "action": "read",
-      "resource": "products.description"
-    },
-    { "action": "write", "resource": "products.stock" },
-    { "action": "write", "resource": "products.sales" },
-    { "action": "list", "resource": "categories" }
-  ],
-  "administrator": [{ "action": "*", "resource": "*" }]
+  "admin": [{ "action": "*", "resource": "*" }]
 }
