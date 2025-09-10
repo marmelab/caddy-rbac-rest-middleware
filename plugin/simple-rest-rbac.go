@@ -43,9 +43,12 @@ func extractRecordID(path string) string {
 	return ""
 }
 
-// getActionFromMethod determines the action based on HTTP method and presence of record ID
-func getActionFromMethod(method string, hasRecordID bool) string {
-	switch method {
+// getActionFromRequest determines the action based on the HTTP request
+func getActionFromRequest(r *http.Request) string {
+	recordID := extractRecordID(r.URL.Path)
+	hasRecordID := recordID != ""
+	
+	switch r.Method {
 	case "GET":
 		if hasRecordID {
 			return "show"
@@ -113,12 +116,8 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 		return next.ServeHTTP(w, r)
 	}
 	
-	// Extract record ID from URL path
-	recordID := extractRecordID(r.URL.Path)
-	hasRecordID := recordID != ""
-	
-	// Determine action from HTTP method
-	action := getActionFromMethod(r.Method, hasRecordID)
+	// Determine action from HTTP request
+	action := getActionFromRequest(r)
 	if action == "" {
 		// Unknown method, deny access
 		return caddyhttp.Error(http.StatusMethodNotAllowed, fmt.Errorf("method not allowed"))
@@ -137,7 +136,6 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 			zap.String("role", role),
 			zap.String("action", action),
 			zap.String("resource", resource),
-			zap.String("record_id", recordID),
 		)
 		return caddyhttp.Error(http.StatusForbidden, fmt.Errorf("access denied"))
 	}
@@ -147,7 +145,6 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 		zap.String("role", role),
 		zap.String("action", action),
 		zap.String("resource", resource),
-		zap.String("record_id", recordID),
 	)
 	return next.ServeHTTP(w, r)
 }
